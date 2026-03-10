@@ -1,0 +1,242 @@
+openapi: 3.0.0
+info:
+  title: OpenAPI for todo API
+  description: "OpenAPI for TODO API."
+  version: 0.0.1
+
+servers:
+  - url: http://localhost:8080
+    description: "local environment port 8080"
+
+paths:
+  /todos:
+    get:
+      operationId: GetTodoList
+      tags:
+        - todo
+      summary: "タスク一覧取得"
+      parameters:
+        - name: userId
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: uint
+      responses:
+        '200':
+          description: "タスク詳細"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoList'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      operationId: CreateTodo
+      tags:
+        - todo  
+      summary: "タスク新規作成"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoCreateRequest'
+      responses:
+        '201':
+          description: "作成されたタスク"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /todos/{id}:
+    get:
+      operationId: GetTodoByID
+      tags:
+        - todo
+      summary: "タスク詳細取得"
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: uint
+          required: true
+          description: タスクID
+      responses:
+        '200':
+          description: "タスク詳細"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      operationId: UpdateTodo
+      tags:
+        - todo
+      summary: "タスク更新"
+      parameters:
+        - in: path
+          name: id
+          description: タスクID
+          required: true
+          schema:
+            type: integer
+            format: uint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoUpdateRequest'
+      responses:
+        '200':
+          description: "更新されたタスク"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      security:
+        - BearerAuth: []
+      operationId: DeleteTodo
+      tags:
+        - todo
+      summary: "タスク削除"
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: uint
+          required: true
+          description: タスクID
+      responses:
+        '204':
+          description: "削除成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Todo:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint
+        title:
+          type: string
+        content:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    TodoList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Todo"
+    TodoCreateRequest:
+      type: object
+      required:
+        - title
+        - content
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+    TodoUpdateRequest:
+      type: object
+      required:
+        - title
+        - content
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+    SuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "message"
+      required:
+        - message
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "message"
+      required:
+        - error
