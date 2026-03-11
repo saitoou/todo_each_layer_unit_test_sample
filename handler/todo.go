@@ -4,6 +4,7 @@ package handler
 
 import (
 	"context"
+	"local-golang-prac/gen/openapi/common"
 	"local-golang-prac/usecase"
 	"net/http"
 
@@ -12,7 +13,7 @@ import (
 
 type TodoUseCase interface {
 	GetTodoByID(ctx context.Context, id uint) (*usecase.TodoUsecaseOutput, error)
-	CreateTodo(ctx context.Context, email string, todo usecase.TodoUsecaseInput) error
+	CreateTodo(ctx context.Context, todo usecase.TodoUsecaseInput) error
 	UpdateTodo(ctx context.Context, todo usecase.TodoUsecaseInput) error
 	DeleteTodo(ctx context.Context, id uint) error
 }
@@ -30,23 +31,17 @@ func NewTodoHandler(todoUseCase TodoUseCase) *TodoHandler {
 func (h *TodoHandler) GetTodoByID(c echo.Context, id uint) error {
 	ctx := c.Request().Context()
 
-	email, err := middleware.ExtractEmailFromToken(c)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, map[string]string{"message": "failed to extract token"})
-	}
-
 	ret, err := h.todoUseCase.GetTodoByID(ctx, id)
 	if err != nil {
 		return err
 	}
 
 	return c.JSON(http.StatusOK, ret)
-
 }
 
 func (h *TodoHandler) CreateTodo(c echo.Context) error {
 	ctx := c.Request().Context()
-	req := openapi.CreateTodoJSONRequestBody{}
+	req := common.TodoCreateRequest{}
 
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
@@ -57,12 +52,7 @@ func (h *TodoHandler) CreateTodo(c echo.Context) error {
 		Content: req.Content,
 	}
 
-	email, err := middleware.ExtractEmailFromToken(c)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, map[string]string{"message": "failed to extract token"})
-	}
-
-	err = h.todoUseCase.CreateTodo(ctx, email, createTodo)
+	err := h.todoUseCase.CreateTodo(ctx, createTodo)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
@@ -71,7 +61,7 @@ func (h *TodoHandler) CreateTodo(c echo.Context) error {
 
 func (h *TodoHandler) UpdateTodo(c echo.Context, id uint) error {
 	ctx := c.Request().Context()
-	req := openapi.TodoUpdateRequest{}
+	req := common.TodoUpdateRequest{}
 
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})

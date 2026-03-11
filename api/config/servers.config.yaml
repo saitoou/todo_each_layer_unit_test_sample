@@ -1,0 +1,7 @@
+package: openapi
+generate:
+  echo-server: true
+  embedded-spec: true
+output: gen/openapi/v1/servers.gen.go
+output-options:
+  skip-prune: true

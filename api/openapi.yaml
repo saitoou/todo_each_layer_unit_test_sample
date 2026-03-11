@@ -9,38 +9,7 @@ servers:
     description: "local environment port 8080"
 
 paths:
-  /todos:
-    get:
-      operationId: GetTodoList
-      tags:
-        - todo
-      summary: "タスク一覧取得"
-      parameters:
-        - name: userId
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: uint
-      responses:
-        '200':
-          description: "タスク詳細"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TodoList'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+  /todo:
     post:
       operationId: CreateTodo
       tags:
@@ -71,7 +40,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-  /todos/{id}:
+  /todo/{id}:
     get:
       operationId: GetTodoByID
       tags:
@@ -143,8 +112,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
     delete:
-      security:
-        - BearerAuth: []
       operationId: DeleteTodo
       tags:
         - todo
@@ -178,11 +145,6 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
 
 components:
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
   schemas:
     Todo:
       type: object
@@ -200,10 +162,6 @@ components:
         updated_at:
           type: string
           format: date-time
-    TodoList:
-      type: array
-      items:
-        $ref: "#/components/schemas/Todo"
     TodoCreateRequest:
       type: object
       required:
