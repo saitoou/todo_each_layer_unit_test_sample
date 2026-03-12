@@ -42,7 +42,7 @@ func (m *MockTodoUseCase) EXPECT() *MockTodoUseCaseMockRecorder {
 }
 
 // CreateTodo mocks base method.
-func (m *MockTodoUseCase) CreateTodo(ctx context.Context, todo usecase.TodoUsecaseInput) error {
+func (m *MockTodoUseCase) CreateTodo(ctx context.Context, todo *usecase.TodoUsecaseInput) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateTodo", ctx, todo)
 	ret0, _ := ret[0].(error)
@@ -85,7 +85,7 @@ func (mr *MockTodoUseCaseMockRecorder) GetTodoByID(ctx, id any) *gomock.Call {
 }
 
 // UpdateTodo mocks base method.
-func (m *MockTodoUseCase) UpdateTodo(ctx context.Context, todo usecase.TodoUsecaseInput) error {
+func (m *MockTodoUseCase) UpdateTodo(ctx context.Context, todo *usecase.TodoUsecaseInput) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateTodo", ctx, todo)
 	ret0, _ := ret[0].(error)

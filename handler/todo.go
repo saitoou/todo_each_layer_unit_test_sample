@@ -13,8 +13,8 @@ import (
 
 type TodoUseCase interface {
 	GetTodoByID(ctx context.Context, id uint) (*usecase.TodoUsecaseOutput, error)
-	CreateTodo(ctx context.Context, todo usecase.TodoUsecaseInput) error
-	UpdateTodo(ctx context.Context, todo usecase.TodoUsecaseInput) error
+	CreateTodo(ctx context.Context, todo *usecase.TodoUsecaseInput) error
+	UpdateTodo(ctx context.Context, todo *usecase.TodoUsecaseInput) error
 	DeleteTodo(ctx context.Context, id uint) error
 }
 
@@ -47,7 +47,7 @@ func (h *TodoHandler) CreateTodo(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
-	createTodo := usecase.TodoUsecaseInput{
+	createTodo := &usecase.TodoUsecaseInput{
 		Title:   req.Title,
 		Content: req.Content,
 	}
@@ -73,7 +73,7 @@ func (h *TodoHandler) UpdateTodo(c echo.Context, id uint) error {
 		Content: req.Content,
 	}
 
-	err := h.todoUseCase.UpdateTodo(ctx, updateTodo)
+	err := h.todoUseCase.UpdateTodo(ctx, &updateTodo)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
